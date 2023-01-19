@@ -1,0 +1,121 @@
+﻿@page "/"
+@using BlazorAppMongoDB.Data
+@inject BlazorAppMongoDB.IService.IStudentService studentService
+@using BlazorAppMongoDB.PageClass
+
+<PageTitle>Index</PageTitle>
+
+<div class="row">
+    <div class="col-md-4">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Students.Count() > 0)
+                {
+                    @foreach (var stu in Students)
+                    {
+                        <tr>
+                            <td>@stu.Id</td>
+                            <td>@stu.Name</td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="@(e => Edit(stu.Id))">Details</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Name:</label>
+                    </div>
+                    <div class="col-md-10">
+                        <input @bind="Student.Name" type="text" placeholder="Student name" style="width:100%;" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Photo:</label>
+                    </div>
+                    <div class="col-md-10">
+                        <BlazorInputFile.InputFile OnChange="HandleFileSelection" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img src="@imageSrc" width="200" height="200" style="border:1px solid #000000;margin-top:10px;" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button @onclick="@SaveStudent" class="btn btn-primary" style="width=100%;margin-top:10px;">Save</button>
+                <span style="font-weight:bold;font-size:24px;">@Message</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    string imageSrc = "";
+    string Message = "";
+    IFileListEntry file = null;
+    byte[] fileBytes = null;
+    Student Student = new Student();
+    List<Student> Students = new List<Student>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetStudents();
+    }
+
+    private void GetStudents()
+    {
+        Students = studentService.GetStudents();
+    }
+
+    public async Task HandleFileSelection(IFileListEntry[] files)
+    {
+        if (files.Count() > 0)
+        {
+            file = files.FirstOrDefault();
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.Data.CopyToAsync(memoryStream);
+                fileBytes = memoryStream.ToArray();
+
+                StudentPage studentPage = new StudentPage(studentService);
+                var photo = studentPage.GetImage(Convert.ToBase64String(fileBytes));
+
+                imageSrc = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(photo));
+            }
+        }
+    }
+
+    public void SaveStudent()
+    {
+        StudentPage studentPage = new StudentPage(studentService);
+        Message = studentPage.SaveInfo(fileBytes, Student);
+
+        Student = new Student();
+        imageSrc = "";
+        GetStudents();
+    }
+
+    private void Edit(string studentId)
+    {
+        StudentPage studentPage = new StudentPage(studentService);
+        Student = studentPage.GetStudent(studentId);
+        imageSrc = Student.ImageUrl;
+        Message = "";
+    }
+}
