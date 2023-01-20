@@ -42,5 +42,11 @@ namespace BlazorAppMongoDB.Service
             }
             return "Saved";
         }
+
+        public string Delete(string studentId)
+        {
+            studentTable.DeleteOne(x => x.Id == studentId);
+            return "Deleted";
+        }
     }
 }
