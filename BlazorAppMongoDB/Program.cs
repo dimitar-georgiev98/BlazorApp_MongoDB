@@ -15,7 +15,6 @@ namespace BlazorAppMongoDB
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
-            builder.Services.AddSingleton<WeatherForecastService>();
             builder.Services.AddScoped<IStudentService, StudentService>();
 
             var app = builder.Build();

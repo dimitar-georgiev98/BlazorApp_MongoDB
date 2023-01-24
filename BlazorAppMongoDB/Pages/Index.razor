@@ -3,7 +3,7 @@
 @inject BlazorAppMongoDB.IService.IStudentService studentService
 @using BlazorAppMongoDB.PageClass
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Students</PageTitle>
 
 <div class="row">
     <div class="col-md-4">
@@ -12,7 +12,7 @@
                 <tr>
                     <th>Student ID</th>
                     <th>Name</th>
-                    <th>Action</th>
+                    <th>Update/Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,7 +25,7 @@
                             <td>@stu.Name</td>
                             <td>
                                 <button class="btn btn-info" @onclick="@(e => Edit(stu.Id))">Edit</button>
-                                <button class ="btn btn-danger" @onclick="@(e => Delete(stu.Id))">Delete</button>
+                                <button class="btn btn-danger" @onclick="@(e => Delete(stu.Id))">Delete</button>
                             </td>
                         </tr>
                     }

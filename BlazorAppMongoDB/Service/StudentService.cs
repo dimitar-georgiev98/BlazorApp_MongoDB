@@ -8,9 +8,9 @@ namespace BlazorAppMongoDB.Service
     {
         Student student = new Student();
 
-        private MongoClient mongoClient = null;
-        private IMongoDatabase database = null;
-        private IMongoCollection<Student> studentTable = null;
+        private MongoClient? mongoClient = null;
+        private IMongoDatabase? database = null;
+        private IMongoCollection<Student>? studentTable = null;
 
         public StudentService()
         {
